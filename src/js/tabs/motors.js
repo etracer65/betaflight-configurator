@@ -45,7 +45,15 @@ TABS.motors.initialize = function (callback) {
     }
 
     function load_motor_data() {
-        MSP.send_message(MSPCodes.MSP_MOTOR, false, false, load_mixer_config);
+        MSP.send_message(MSPCodes.MSP_MOTOR, false, false, load_motor_dshot_telemetry_data);
+    }
+
+    function load_motor_dshot_telemetry_data() {
+        if (MOTOR_CONFIG.use_dshot_telemetry) {
+            MSP.send_message(MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY, false, false, load_mixer_config);
+        } else {
+            load_mixer_config();
+        }
     }
 
     function load_mixer_config() {
@@ -592,7 +600,15 @@ TABS.motors.initialize = function (callback) {
         }
 
         function get_motor_data() {
-            MSP.send_message(MSPCodes.MSP_MOTOR, false, false, get_servo_data);
+            MSP.send_message(MSPCodes.MSP_MOTOR, false, false, get_motor_dshot_telemetry_data);
+        }
+
+        function get_motor_dshot_telemetry_data() {
+            if (MOTOR_CONFIG.use_dshot_telemetry) {
+                MSP.send_message(MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY, false, false, get_servo_data);
+            } else {
+                get_servo_data();
+            }
         }
 
         function get_servo_data() {
@@ -618,6 +634,10 @@ TABS.motors.initialize = function (callback) {
                     'height' : height + 'px',
                     'background-color' : 'rgba(255,187,0,1.'+ color +')'
                 });
+
+                if (i < MOTOR_CONFIG.motor_count && MOTOR_CONFIG.use_dshot_telemetry) {
+                    $('.motor-' + i + ' .label', motors_wrapper).text(MOTOR_DSHOT_TELEMETRY_DATA.rpm[i]);
+                }
             }
 
             // servo indicators are still using old (not flexible block scale), it will be changed in the future accordingly
