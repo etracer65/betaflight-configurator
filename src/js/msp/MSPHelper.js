@@ -142,6 +142,13 @@ MspHelper.prototype.process_data = function(dataHandler) {
                     MOTOR_DATA[i] = data.readU16();
                 }
                 break;
+            case MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY:
+                var motorCount = data.readU8();
+                for (var i = 0; i < motorCount; i++) {
+                    MOTOR_DSHOT_TELEMETRY_DATA.rpm[i] = data.readU32();   // RPM
+                    MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i] = data.readU16();   // 10000 = 100.00%
+                }
+                break;
             case MSPCodes.MSP_RC:
                 RC.active_channels = data.byteLength / 2;
                 for (var i = 0; i < RC.active_channels; i++) {
@@ -392,6 +399,10 @@ MspHelper.prototype.process_data = function(dataHandler) {
                 MOTOR_CONFIG.minthrottle = data.readU16(); // 0-2000
                 MOTOR_CONFIG.maxthrottle = data.readU16(); // 0-2000
                 MOTOR_CONFIG.mincommand = data.readU16(); // 0-2000
+                if (semver.gte(CONFIG.apiVersion, "1.42.0")) {
+                    MOTOR_CONFIG.motor_count = data.readU8();
+                    MOTOR_CONFIG.use_dshot_telemetry = data.readU8();
+                }
                 break;
             case MSPCodes.MSP_COMPASS_CONFIG:
                 COMPASS_CONFIG.mag_declination = data.read16() / 100; // -18000-18000
