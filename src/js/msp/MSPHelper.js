@@ -143,8 +143,8 @@ MspHelper.prototype.process_data = function(dataHandler) {
                 }
                 break;
             case MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY:
-                var motorCount = data.readU8();
-                for (var i = 0; i < motorCount; i++) {
+                var telemMotorCount = data.readU8();
+                for (let i = 0; i < telemMotorCount; i++) {
                     MOTOR_DSHOT_TELEMETRY_DATA.rpm[i] = data.readU32();   // RPM
                     MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i] = data.readU16();   // 10000 = 100.00%
                 }
@@ -401,7 +401,7 @@ MspHelper.prototype.process_data = function(dataHandler) {
                 MOTOR_CONFIG.mincommand = data.readU16(); // 0-2000
                 if (semver.gte(CONFIG.apiVersion, "1.42.0")) {
                     MOTOR_CONFIG.motor_count = data.readU8();
-                    MOTOR_CONFIG.use_dshot_telemetry = data.readU8();
+                    MOTOR_CONFIG.use_dshot_telemetry = data.readU8() != 0;
                 }
                 break;
             case MSPCodes.MSP_COMPASS_CONFIG:

@@ -212,6 +212,7 @@ var FC = {
             rpm:                        [0, 0, 0, 0, 0, 0, 0, 0],
             invalidPercent:             [0, 0, 0, 0, 0, 0, 0, 0],
         };
+
         GPS_DATA = {
             fix:                        0,
             numSat:                     0,

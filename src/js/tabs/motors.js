@@ -628,16 +628,35 @@ TABS.motors.initialize = function (callback) {
                 height = (barHeight * (block_height / full_block_scale)).clamp(0, block_height),
                 color = parseInt(barHeight * 0.009);
 
-                $('.motor-' + i + ' .label', motors_wrapper).text(motorValue);
-                $('.motor-' + i + ' .indicator', motors_wrapper).css({
+                let upperBottomGraphBar_e = $('.motor-' + i + ' .label', motors_wrapper);
+                let bottomGraphBar_e = $('.motor-' + i + ' .indicator', motors_wrapper);
+
+                let motorText;
+                if (MOTOR_CONFIG.use_dshot_telemetry && i < MOTOR_CONFIG.motor_count) {
+
+                    upperBottomGraphBar_e.addClass('rpm_info');
+
+                    // Reduce the size of the value
+                    let rpmMotorValue = MOTOR_DSHOT_TELEMETRY_DATA.rpm[i];
+                    if (rpmMotorValue > 999999) {
+                        rpmMotorValue = (rpmMotorValue / 1000000).toFixed(5 - (rpmMotorValue / 1000000).toFixed(0).toString().length) + "M";  
+                    }
+
+                    motorText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
+                    motorText += "<br><br>";
+                    motorText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i] / 100).toFixed(2)});
+
+                } else {
+                    motorText = motorValue;
+                }
+
+                upperBottomGraphBar_e.html(motorText);
+                bottomGraphBar_e.css({
                     'margin-top' : margin_top + 'px',
                     'height' : height + 'px',
                     'background-color' : 'rgba(255,187,0,1.'+ color +')'
                 });
 
-                if (i < MOTOR_CONFIG.motor_count && MOTOR_CONFIG.use_dshot_telemetry) {
-                    $('.motor-' + i + ' .label', motors_wrapper).text(MOTOR_DSHOT_TELEMETRY_DATA.rpm[i]);
-                }
             }
 
             // servo indicators are still using old (not flexible block scale), it will be changed in the future accordingly

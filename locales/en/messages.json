@@ -2267,6 +2267,14 @@
     "motorsSensorAccelSelect":{
         "message": "accel"
     },
+    "motorsRPM": {
+        "message": "{{motorsRpmValue}} RPM",
+        "description": "To put inside the motor square in the motors tab so KEEP IT SHORT or not translate."
+    },
+    "motorsRPMError": {
+        "message": "Error {{motorsErrorValue}}%",
+        "description": "To put inside the motor square in the motors tab so KEEP IT SHORT or not translate."
+    },
     "motorsMaster": {
         "message": "Master"
     },

@@ -182,12 +182,12 @@
 
 .tab-motors .left.motors {
     float: left;
-    width: calc(50% - 50px);
+    width: calc(60% - 20px);
 }
 
 .tab-motors .right.servos {
     float: right;
-    width: 50%;
+    width: 40%;
 }
 
 .tab-motors .title {
@@ -251,7 +251,12 @@
     bottom: 45px;
     text-align: center;
     font-weight: bold;
+    font-size: 10px;
     color: #474747;
+}
+
+.tab-motors .m-block .label.rpm_info {
+    bottom: 28px;
 }
 
 .tab-motors .m-block .indicator .label {
@@ -278,7 +283,7 @@
 }
 
 .tab-motors .motor_testing .left {
-    width: calc(50% - 50px);
+    width: calc(60% - 20px);
 }
 
 .tab-motors .motor_testing .sliders input {
@@ -309,7 +314,7 @@
 
 .tab-motors .motor_testing .notice {
     float: right;
-    width: calc(50% - 24px);
+    width: calc(40% - 24px);
     padding: 5px;
     border: 2px solid #ccc;
     border-radius: 3px;
