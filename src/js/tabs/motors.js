@@ -656,10 +656,16 @@ TABS.motors.initialize = function (callback) {
                     }
 
                     let telemetryText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
+
+                    const MAX_INVALID_PERCENT = 100;
                     if (MOTOR_CONFIG.use_dshot_telemetry) {
-                        telemetryText += "<br>";
+
+                        let classError = (invalidPercent > MAX_INVALID_PERCENT) ? "warning" : "";
+                        telemetryText += "<br><span class='" + classError + "'>";
                         telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (invalidPercent / 100).toFixed(2)});
+                        telemetryText += "</span>";
                     }
+
                     if (MOTOR_CONFIG.use_esc_sensor) {
                         telemetryText += "<br>";
                         telemetryText += i18n.getMessage('motorsESCTemperature', {motorsESCTempValue: escTemperature});
