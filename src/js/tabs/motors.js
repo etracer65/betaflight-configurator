@@ -45,12 +45,12 @@ TABS.motors.initialize = function (callback) {
     }
 
     function load_motor_data() {
-        MSP.send_message(MSPCodes.MSP_MOTOR, false, false, load_motor_dshot_telemetry_data);
+        MSP.send_message(MSPCodes.MSP_MOTOR, false, false, load_motor_telemetry_data);
     }
 
-    function load_motor_dshot_telemetry_data() {
-        if (MOTOR_CONFIG.use_dshot_telemetry) {
-            MSP.send_message(MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY, false, false, load_mixer_config);
+    function load_motor_telemetry_data() {
+        if (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor) {
+            MSP.send_message(MSPCodes.MSP_MOTOR_TELEMETRY, false, false, load_mixer_config);
         } else {
             load_mixer_config();
         }
@@ -224,7 +224,7 @@ TABS.motors.initialize = function (callback) {
 
         $('#motorsEnableTestMode').prop('checked', false);
 
-        if (semver.lt(CONFIG.apiVersion, "1.42.0") || !MOTOR_CONFIG.use_dshot_telemetry) {
+        if (semver.lt(CONFIG.apiVersion, "1.42.0") || !(MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor)) {
             $(".motor_testing .telemetry").hide();
         }
 
@@ -604,12 +604,12 @@ TABS.motors.initialize = function (callback) {
         }
 
         function get_motor_data() {
-            MSP.send_message(MSPCodes.MSP_MOTOR, false, false, get_motor_dshot_telemetry_data);
+            MSP.send_message(MSPCodes.MSP_MOTOR, false, false, get_motor_telemetry_data);
         }
 
-        function get_motor_dshot_telemetry_data() {
-            if (MOTOR_CONFIG.use_dshot_telemetry) {
-                MSP.send_message(MSPCodes.MSP_MOTOR_DSHOT_TELEMETRY, false, false, get_servo_data);
+        function get_motor_telemetry_data() {
+            if (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor) {
+                MSP.send_message(MSPCodes.MSP_MOTOR_TELEMETRY, false, false, get_servo_data);
             } else {
                 get_servo_data();
             }
@@ -639,13 +639,15 @@ TABS.motors.initialize = function (callback) {
                     'background-color' : 'rgba(255,187,0,1.'+ color +')'
                 });
 
-                if (MOTOR_CONFIG.use_dshot_telemetry) {
+                if (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor) {
 
                     let rpmMotorValue = 0;
                     let invalidPercent = 0;
+                    let escTemperature = 0;
                     if (i < MOTOR_CONFIG.motor_count) {
-                        rpmMotorValue = MOTOR_DSHOT_TELEMETRY_DATA.rpm[i];
-                        invalidPercent = MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i];
+                        rpmMotorValue = MOTOR_TELEMETRY_DATA.rpm[i];
+                        invalidPercent = MOTOR_TELEMETRY_DATA.invalidPercent[i];
+                        escTemperature = MOTOR_TELEMETRY_DATA.temperature[i];
                     }
 
                     // Reduce the size of the value if too big
@@ -654,8 +656,14 @@ TABS.motors.initialize = function (callback) {
                     }
 
                     let telemetryText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
-                    telemetryText += "<br>";
-                    telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (invalidPercent / 100).toFixed(2)});
+                    if (MOTOR_CONFIG.use_dshot_telemetry) {
+                        telemetryText += "<br>";
+                        telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (invalidPercent / 100).toFixed(2)});
+                    }
+                    if (MOTOR_CONFIG.use_esc_sensor) {
+                        telemetryText += "<br>";
+                        telemetryText += i18n.getMessage('motorsESCTemperature', {motorsESCTempValue: escTemperature});
+                    }
 
                     $('.motor_testing .telemetry .motor-' + i).html(telemetryText);
                 }
