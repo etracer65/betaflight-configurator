@@ -224,6 +224,10 @@ TABS.motors.initialize = function (callback) {
 
         $('#motorsEnableTestMode').prop('checked', false);
 
+        if (semver.lt(CONFIG.apiVersion, "1.42.0") || !MOTOR_CONFIG.use_dshot_telemetry) {
+            $(".motor_testing .telemetry").hide();
+        }
+
         update_model(MIXER_CONFIG.mixer);
 
         // Always start with default/empty sensor data array, clean slate all
@@ -442,7 +446,7 @@ TABS.motors.initialize = function (callback) {
         }
 
         var motors_wrapper = $('.motors .bar-wrapper'),
-        servos_wrapper = $('.servos .bar-wrapper');
+            servos_wrapper = $('.servos .bar-wrapper');
 
         for (var i = 0; i < 8; i++) {
             motors_wrapper.append('\
@@ -628,34 +632,34 @@ TABS.motors.initialize = function (callback) {
                 height = (barHeight * (block_height / full_block_scale)).clamp(0, block_height),
                 color = parseInt(barHeight * 0.009);
 
-                let upperBottomGraphBar_e = $('.motor-' + i + ' .label', motors_wrapper);
-                let bottomGraphBar_e = $('.motor-' + i + ' .indicator', motors_wrapper);
-
-                let motorText;
-                if (MOTOR_CONFIG.use_dshot_telemetry && i < MOTOR_CONFIG.motor_count) {
-
-                    upperBottomGraphBar_e.addClass('rpm_info');
-
-                    // Reduce the size of the value
-                    let rpmMotorValue = MOTOR_DSHOT_TELEMETRY_DATA.rpm[i];
-                    if (rpmMotorValue > 999999) {
-                        rpmMotorValue = (rpmMotorValue / 1000000).toFixed(5 - (rpmMotorValue / 1000000).toFixed(0).toString().length) + "M";  
-                    }
-
-                    motorText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
-                    motorText += "<br><br>";
-                    motorText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i] / 100).toFixed(2)});
-
-                } else {
-                    motorText = motorValue;
-                }
-
-                upperBottomGraphBar_e.html(motorText);
-                bottomGraphBar_e.css({
+                $('.motor-' + i + ' .label', motors_wrapper).text(motorValue);
+                $('.motor-' + i + ' .indicator', motors_wrapper).css({
                     'margin-top' : margin_top + 'px',
                     'height' : height + 'px',
                     'background-color' : 'rgba(255,187,0,1.'+ color +')'
                 });
+
+                if (MOTOR_CONFIG.use_dshot_telemetry) {
+
+                    let rpmMotorValue = 0;
+                    let invalidPercent = 0;
+                    if (i < MOTOR_CONFIG.motor_count) {
+                        rpmMotorValue = MOTOR_DSHOT_TELEMETRY_DATA.rpm[i];
+                        invalidPercent = MOTOR_DSHOT_TELEMETRY_DATA.invalidPercent[i];
+                    }
+
+                    // Reduce the size of the value if too big
+                    if (rpmMotorValue > 999999) {
+                        rpmMotorValue = (rpmMotorValue / 1000000).toFixed(5 - (rpmMotorValue / 1000000).toFixed(0).toString().length) + "M";  
+                    }
+
+                    let telemetryText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
+                    telemetryText += "<br>";
+                    telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (invalidPercent / 100).toFixed(2)});
+
+                    $('.motor_testing .telemetry .motor-' + i).html(telemetryText);
+                }
+                
 
             }
 

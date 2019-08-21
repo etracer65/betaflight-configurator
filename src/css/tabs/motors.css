@@ -279,7 +279,7 @@
 }
 
 .tab-motors .motor_testing {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .tab-motors .motor_testing .left {
@@ -301,15 +301,26 @@
     margin-top: 5px;
 }
 
-.tab-motors .motor_testing .values li:first-child {
+.tab-motors .motor_testing .telemetry {
+    margin-bottom: 20px;
+}
+
+.tab-motors .motor_testing .values li:first-child,
+.tab-motors .motor_testing .telemetry li:first-child {
     margin-left: 0px;
 }
 
-.tab-motors .motor_testing .values li {
+.tab-motors .motor_testing .values li,
+.tab-motors .motor_testing .telemetry li {
     float: left;
     width: calc((100% / 9) - 10px);
     margin-left: 10px;
     text-align: center;
+    font-size: 10px;
+}
+
+.tab-motors .motor_testing .telemetry li {
+    height: 30px;
 }
 
 .tab-motors .motor_testing .notice {
