@@ -112,7 +112,7 @@ var MSPCodes = {
     MSP_COMPASS_CONFIG:             133,
     MSP_GPS_RESCUE:                 135,
 
-    MSP_MOTOR_DSHOT_TELEMETRY:      139,
+    MSP_MOTOR_TELEMETRY:            139,
 
     MSP_STATUS_EX:                  150,
 
