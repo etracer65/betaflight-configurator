@@ -2272,11 +2272,11 @@
         "description": "Help text for the telemetry values in the motors tab."
     },
     "motorsRPM": {
-        "message": "RPM: {{motorsRpmValue}}",
+        "message": "R: {{motorsRpmValue}}",
         "description": "To put under the motors in the motors tab. KEEP IT SHORT or not translate. Keep the letters as prefix. Shows the RPM of the motor if telemetry is available."
     },
     "motorsRPMError": {
-        "message": "Er: {{motorsErrorValue}}%",
+        "message": "E: {{motorsErrorValue}}%",
         "description": "To put under the motors in the motors tab. KEEP IT SHORT or not translate. Shows the error of motor telemetry if available."
     },
     "motorsESCTemperature": {

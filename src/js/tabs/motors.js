@@ -641,6 +641,9 @@ TABS.motors.initialize = function (callback) {
 
                 if (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor) {
 
+                    const MAX_INVALID_PERCENT = 100,
+                          MAX_VALUE_SIZE = 6;
+
                     let rpmMotorValue = 0;
                     let invalidPercent = 0;
                     let escTemperature = 0;
@@ -655,19 +658,23 @@ TABS.motors.initialize = function (callback) {
                         rpmMotorValue = (rpmMotorValue / 1000000).toFixed(5 - (rpmMotorValue / 1000000).toFixed(0).toString().length) + "M";  
                     }
 
+                    rpmMotorValue = rpmMotorValue.toString().padStart(MAX_VALUE_SIZE);
                     let telemetryText = i18n.getMessage('motorsRPM', {motorsRpmValue: rpmMotorValue});
 
-                    const MAX_INVALID_PERCENT = 100;
+                    
                     if (MOTOR_CONFIG.use_dshot_telemetry) {
 
                         let classError = (invalidPercent > MAX_INVALID_PERCENT) ? "warning" : "";
+                        invalidPercent = (invalidPercent / 100).toFixed(2).toString().padStart(MAX_VALUE_SIZE);
+
                         telemetryText += "<br><span class='" + classError + "'>";
-                        telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: (invalidPercent / 100).toFixed(2)});
+                        telemetryText += i18n.getMessage('motorsRPMError', {motorsErrorValue: invalidPercent});
                         telemetryText += "</span>";
                     }
 
                     if (MOTOR_CONFIG.use_esc_sensor) {
                         telemetryText += "<br>";
+                        escTemperature = escTemperature.toString().padStart(MAX_VALUE_SIZE);
                         telemetryText += i18n.getMessage('motorsESCTemperature', {motorsESCTempValue: escTemperature});
                     }
 
