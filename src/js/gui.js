@@ -348,19 +348,17 @@ GUI_control.prototype.content_ready = function (callback) {
         log(this); // ...print out "this", which now refers to each ".cf_tip" DOM element
     });
 
-    $('.cf_tip').each(function() {
-        $(this).jBox('Tooltip', {            
-            delayOpen: 100,
-            delayClose: 100,
-            position: {
-                x: 'right',
-                y: 'center'
-            },
-            outside: 'x'
-            });
+    new jBox('Tooltip', {
+        attach: '.cf_tip',
+        delayOpen: 100,
+        delayClose: 100,
+        position: {
+            x: 'right',
+            y: 'center'
+        },
+        outside: 'x'
         });
     });
-
 
     if (callback) callback();
 }
