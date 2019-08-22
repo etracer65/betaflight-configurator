@@ -639,19 +639,12 @@ TABS.motors.initialize = function (callback) {
                     'background-color' : 'rgba(255,187,0,1.'+ color +')'
                 });
 
-                if (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor) {
+                if (i < MOTOR_CONFIG.motor_count && (MOTOR_CONFIG.use_dshot_telemetry || MOTOR_CONFIG.use_esc_sensor)) {
 
                     const MAX_INVALID_PERCENT = 100,
                           MAX_VALUE_SIZE = 6;
 
-                    let rpmMotorValue = 0;
-                    let invalidPercent = 0;
-                    let escTemperature = 0;
-                    if (i < MOTOR_CONFIG.motor_count) {
-                        rpmMotorValue = MOTOR_TELEMETRY_DATA.rpm[i];
-                        invalidPercent = MOTOR_TELEMETRY_DATA.invalidPercent[i];
-                        escTemperature = MOTOR_TELEMETRY_DATA.temperature[i];
-                    }
+                    let rpmMotorValue = MOTOR_TELEMETRY_DATA.rpm[i];
 
                     // Reduce the size of the value if too big
                     if (rpmMotorValue > 999999) {
@@ -664,6 +657,8 @@ TABS.motors.initialize = function (callback) {
                     
                     if (MOTOR_CONFIG.use_dshot_telemetry) {
 
+                        let invalidPercent = MOTOR_TELEMETRY_DATA.invalidPercent[i];
+
                         let classError = (invalidPercent > MAX_INVALID_PERCENT) ? "warning" : "";
                         invalidPercent = (invalidPercent / 100).toFixed(2).toString().padStart(MAX_VALUE_SIZE);
 
@@ -673,6 +668,9 @@ TABS.motors.initialize = function (callback) {
                     }
 
                     if (MOTOR_CONFIG.use_esc_sensor) {
+
+                        let escTemperature = MOTOR_TELEMETRY_DATA.temperature[i];
+
                         telemetryText += "<br>";
                         escTemperature = escTemperature.toString().padStart(MAX_VALUE_SIZE);
                         telemetryText += i18n.getMessage('motorsESCTemperature', {motorsESCTempValue: escTemperature});
