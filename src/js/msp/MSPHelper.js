@@ -147,7 +147,10 @@ MspHelper.prototype.process_data = function(dataHandler) {
                 for (let i = 0; i < telemMotorCount; i++) {
                     MOTOR_TELEMETRY_DATA.rpm[i] = data.readU32();   // RPM
                     MOTOR_TELEMETRY_DATA.invalidPercent[i] = data.readU16();   // 10000 = 100.00%
-                    MOTOR_TELEMETRY_DATA.temperature[i] = data.readU8();   // degrees celcius
+                    MOTOR_TELEMETRY_DATA.temperature[i] = data.readU8();       // degrees celcius
+                    MOTOR_TELEMETRY_DATA.voltage[i] = data.readU16();          // 0.01V per unit
+                    MOTOR_TELEMETRY_DATA.current[i] = data.readU16();          // 0.01A per unit
+                    MOTOR_TELEMETRY_DATA.consumption[i] = data.readU16();      // mAh
                 }
                 break;
             case MSPCodes.MSP_RC:
