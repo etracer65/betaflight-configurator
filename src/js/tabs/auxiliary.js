@@ -423,20 +423,62 @@ TABS.auxiliary.initialize = function (callback) {
             MSP.send_message(MSPCodes.MSP_RC, false, false, update_ui);
         }
 
+        function armingChannelInRange() {
+            var andLogic = false;
+            var orLogic = false;
+            var firstAnd = true;
+            var auxChannelCount = RC.active_channels - 4;
+            for (var i = 0; i < MODE_RANGES.length; i++) {
+                var auxChannelIndex = MODE_RANGES[i].auxChannelIndex;
+                var rangeStart = MODE_RANGES[i].range.start;
+                var rangeEnd = MODE_RANGES[i].range.end;
+
+                // Handle the and/or logic. We don't have to worry about the "linked" logic for arming mode
+                var modeLogic = 0;
+                if (semver.gte(CONFIG.apiVersion, "1.41.0")) {
+                    modeLogic = MODE_RANGES_EXTRA[i].modeLogic;
+                }
+
+                if ((MODE_RANGES[i].id == 0) && (auxChannelIndex < auxChannelCount) && (rangeStart < rangeEnd)) {
+                    var channelValue = RC.channels[auxChannelIndex + 4];
+                    var rangeActive = false;
+                    if ((rangeStart <= channelValue) && (channelValue < rangeEnd)) {
+                        rangeActive = true;
+                    }
+                    if (modeLogic) {    // AND
+                        if (firstAnd) {
+                            firstAnd = false;
+                            andLogic = rangeActive;
+                        } else {
+                            andLogic = andLogic && rangeActive;
+                        }
+                    } else {
+                        orLogic = orLogic || rangeActive;
+                    }
+                    
+                }
+            }
+            return (orLogic || andLogic);
+        }
+
         function update_ui() {
             let hasUsedMode = false;
             for (let i = 0; i < AUX_CONFIG.length; i++) {
                 let modeElement = $('#mode-' + i);
                 if (modeElement.find(' .range').length == 0 && modeElement.find(' .link').length == 0) {
                     // if the mode is unused, skip it
-                    modeElement.removeClass('off').removeClass('on');
+                    modeElement.removeClass('off').removeClass('on').removeClass('disabled');
                     continue;
                 }
                 
                 if (bit_check(CONFIG.mode, i)) {
-                    $('.mode .name').eq(i).data('modeElement').addClass('on').removeClass('off');
+                    $('.mode .name').eq(i).data('modeElement').addClass('on').removeClass('off').removeClass('disabled');
                 } else {
-                    $('.mode .name').eq(i).data('modeElement').removeClass('on').addClass('off');
+                    if ((i == 0) && armingChannelInRange()) {
+                        $('.mode .name').eq(i).data('modeElement').removeClass('on').removeClass('off').addClass('disabled');
+                    } else {
+                        $('.mode .name').eq(i).data('modeElement').removeClass('on').removeClass('disabled').addClass('off');
+                    }
                 }
                 hasUsedMode = true;
             }
