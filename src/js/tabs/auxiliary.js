@@ -473,11 +473,24 @@ TABS.auxiliary.initialize = function (callback) {
                 
                 if (bit_check(CONFIG.mode, i)) {
                     $('.mode .name').eq(i).data('modeElement').addClass('on').removeClass('off').removeClass('disabled');
+
+                    // ARM mode is a special case
+                    if (i == 0) {
+                        $('.mode .name').eq(i).html(AUX_CONFIG[i]);
+                    }
                 } else {
+
+                    //ARM mode is a special case
                     if ((i == 0) && armingChannelInRange()) {
                         $('.mode .name').eq(i).data('modeElement').removeClass('on').removeClass('off').addClass('disabled');
+                        $('.mode .name').eq(i).html(AUX_CONFIG[i] + '<br>' + i18n.getMessage('auxiliaryDisabled'));
                     } else {
                         $('.mode .name').eq(i).data('modeElement').removeClass('on').removeClass('disabled').addClass('off');
+
+                        // ARM mode is a special case
+                        if (i == 0) {
+                            $('.mode .name').eq(i).html(AUX_CONFIG[i]);
+                        }
                     }
                 }
                 hasUsedMode = true;
